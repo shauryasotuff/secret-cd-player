@@ -1,85 +1,141 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html>
 <head>
-  <title>Private CD Player</title>
+  <title>Private Listening Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
     body {
-      background: black;
-      color: lime;
-      font-family: monospace;
+      margin: 0;
+      background: #0e0e0e;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
       text-align: center;
+      width: 90%;
+      max-width: 400px;
     }
 
-    .player {
-      margin-top: 40px;
+    .title {
+      font-size: 18px;
+      letter-spacing: 2px;
+      opacity: 0.6;
+      margin-bottom: 40px;
     }
 
-    .display {
-      background: #001100;
-      color: lime;
-      padding: 10px;
-      width: 250px;
-      margin: auto;
-      border: 2px solid lime;
-      margin-bottom: 20px;
-    }
-
-    .cd {
-      width: 200px;
-      height: 200px;
+    .disc {
+      width: 220px;
+      height: 220px;
       border-radius: 50%;
-      background: radial-gradient(circle, silver 40%, gray 60%);
-      margin: 20px auto;
+      margin: 0 auto 40px auto;
+      background: radial-gradient(circle at center, #222 30%, #111 60%, #000 100%);
+      box-shadow: 0 0 40px rgba(255,255,255,0.05);
+      transition: transform 0.3s ease;
     }
 
     .spin {
-      animation: rotate 4s linear infinite;
+      animation: rotate 6s linear infinite;
     }
 
     @keyframes rotate {
       100% { transform: rotate(360deg); }
     }
 
+    .track-info {
+      font-size: 14px;
+      letter-spacing: 1px;
+      opacity: 0.7;
+      margin-bottom: 10px;
+    }
+
+    .timer {
+      font-size: 13px;
+      opacity: 0.4;
+      margin-bottom: 30px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      font-size: 20px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .controls span {
+      transition: opacity 0.2s ease;
+    }
+
+    .controls span:hover {
+      opacity: 0.6;
+    }
+
+    input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #444;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      outline: none;
+      width: 200px;
+      margin-bottom: 20px;
+    }
+
     button {
-      background: black;
-      color: lime;
-      border: 1px solid lime;
-      padding: 8px;
-      margin: 5px;
+      background: none;
+      border: none;
+      color: white;
+      opacity: 0.6;
       cursor: pointer;
     }
 
-    #playerUI {
+    #player {
       display: none;
     }
   </style>
 </head>
 <body>
 
-<h2>Private CD Player</h2>
+<div class="container">
 
-<div id="login">
-  <input type="password" id="password" placeholder="Enter Password">
-  <button onclick="unlock()">Unlock</button>
-</div>
-
-<div id="playerUI" class="player">
-  <div class="display">
-    <div id="trackDisplay">Track 01</div>
-    <div id="timeDisplay">00:00</div>
+  <div id="login">
+    <div class="title">private access</div>
+    <input type="password" id="password" placeholder="enter password">
+    <br>
+    <button onclick="unlock()">enter</button>
   </div>
 
-  <div class="cd" id="disc"></div>
-  <audio id="audio"></audio>
+  <div id="player">
+    <div class="title">untitled</div>
 
-  <button onclick="previous()">⏮</button>
-  <button onclick="play()">▶</button>
-  <button onclick="pause()">⏸</button>
-  <button onclick="next()">⏭</button>
+    <div class="disc" id="disc"></div>
+
+    <div class="track-info" id="trackInfo">track 01</div>
+    <div class="timer" id="timeDisplay">0:00</div>
+
+    <div class="controls">
+      <span onclick="previous()">⟵</span>
+      <span onclick="play()">●</span>
+      <span onclick="pause()">Ⅱ</span>
+      <span onclick="next()">⟶</span>
+    </div>
+
+    <audio id="audio"></audio>
+  </div>
+
 </div>
 
 <script>
-  const correctPassword = "hersecret"; // change this
+  const correctPassword = "hersecret";
 
   const playlist = [
     "track1.mp3",
@@ -91,28 +147,23 @@
 
   const audio = document.getElementById("audio");
   const disc = document.getElementById("disc");
-  const trackDisplay = document.getElementById("trackDisplay");
+  const trackInfo = document.getElementById("trackInfo");
   const timeDisplay = document.getElementById("timeDisplay");
 
   function unlock() {
     const entered = document.getElementById("password").value;
     if (entered === correctPassword) {
       document.getElementById("login").style.display = "none";
-      document.getElementById("playerUI").style.display = "block";
+      document.getElementById("player").style.display = "block";
       loadTrack(currentTrack);
     } else {
-      alert("Wrong password 💿");
+      alert("wrong password");
     }
   }
 
   function loadTrack(index) {
     audio.src = playlist[index];
-    updateTrackDisplay();
-  }
-
-  function updateTrackDisplay() {
-    let number = (currentTrack + 1).toString().padStart(2, "0");
-    trackDisplay.textContent = "Track " + number;
+    trackInfo.textContent = "track " + String(index + 1).padStart(2, "0");
   }
 
   function play() {
