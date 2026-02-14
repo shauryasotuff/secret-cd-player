@@ -19,11 +19,17 @@ body{
   color:white;
   height:100vh;
   overflow:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-/* PASSWORD SCREEN */
+/* ================= PASSWORD SCREEN ================= */
+
 #password-screen{
-  height:100vh;
+  position:absolute;
+  width:100%;
+  height:100%;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -37,24 +43,25 @@ body{
   border-radius:20px;
   text-align:center;
   backdrop-filter:blur(20px);
-  background:rgba(15,20,30,0.8);
+  background:rgba(15,20,30,0.85);
   border:1px solid rgba(0,255,255,0.15);
-  box-shadow:0 0 50px rgba(0,255,255,0.15);
+  box-shadow:0 0 40px rgba(0,255,255,0.15);
 }
 
 .lock-card h1{
   margin-bottom:20px;
   letter-spacing:2px;
-  color:#7fe9ff;
+  font-weight:600;
+  color:#8cefff;
 }
 
 .lock-card input{
   width:100%;
   padding:14px;
   border-radius:12px;
-  border:1px solid rgba(127,233,255,0.3);
+  border:1px solid rgba(140,239,255,0.3);
   background:#0c111c;
-  color:#7fe9ff;
+  color:#8cefff;
   margin-bottom:15px;
 }
 
@@ -69,13 +76,15 @@ body{
   cursor:pointer;
 }
 
-/* PLAYER */
+/* ================= PLAYER ================= */
+
 .player{
   display:none;
-  height:100vh;
   flex-direction:column;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
   padding:20px;
 }
 
@@ -87,43 +96,62 @@ body{
   margin-bottom:35px;
 }
 
-/* CD */
-..cd-wrapper {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  width: 230px;
-  height: 230px;
-  transform: translateX(-30px);
-  transition: transform 0.6s ease;
-  z-index: 1;
+/* CD wrapper handles slide */
+.cd-wrapper{
+  position:absolute;
+  top:15px;
+  left:15px;
+  width:230px;
+  height:230px;
+  transform:translateX(0px);
+  transition:transform 0.6s ease;
+  z-index:1;
 }
 
-.album-container.playing .cd-wrapper {
-  transform: translateX(110px);
+/* Slide out */
+.album-container.playing .cd-wrapper{
+  transform:translateX(110px);
 }
 
-.cd {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+/* CD handles rotation */
+.cd{
+  width:100%;
+  height:100%;
+  border-radius:50%;
   background:
-    radial-gradient(circle at 35% 35%, #ffffff 0%, #dcdcdc 30%, #aaa 60%, #777 100%);
+    radial-gradient(circle at 35% 35%, #ffffff 0%, #dcdcdc 30%, #aaa 60%, #777 100%),
+    repeating-radial-gradient(circle,
+      rgba(255,255,255,0.15) 0px,
+      rgba(255,255,255,0.15) 1px,
+      transparent 2px,
+      transparent 4px
+    );
   box-shadow:
     0 0 30px rgba(0,255,255,0.25),
     inset 0 0 30px rgba(255,255,255,0.5);
 }
 
-/* center hole */
-.cd {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  width: 230px;
-  height: 230px;
-  border-radius: 50%;
-  transform: translateX(-30px); /* slight visible edge */
-  transition: transform 0.6s ease;
+/* Center hole */
+.cd::after{
+  content:"";
+  position:absolute;
+  width:40px;
+  height:40px;
+  background:#060b14;
+  border-radius:50%;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+}
+
+/* Spin animation */
+@keyframes spin{
+  from{transform:rotate(0deg);}
+  to{transform:rotate(360deg);}
+}
+
+.spinning{
+  animation:spin 4s linear infinite;
 }
 
 /* Cover */
@@ -143,27 +171,12 @@ body{
   object-fit:cover;
 }
 
-/* Slide out */
-.album-container.playing .cd{
-  transform:translateX(110px);
-}
-
-/* Spin */
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.spinning {
-  animation: spin 4s linear infinite;
-}
-
-/* Track */
+/* Track info */
 .track-title{
   font-size:20px;
   letter-spacing:2px;
   margin-bottom:8px;
-  color:#7fe9ff;
+  color:#8cefff;
 }
 
 .time{
@@ -180,13 +193,20 @@ body{
 
 .controls button{
   background:rgba(20,30,45,0.6);
-  border:1px solid rgba(127,233,255,0.2);
-  width:55px;
-  height:55px;
+  border:1px solid rgba(140,239,255,0.2);
+  width:60px;
+  height:60px;
   border-radius:50%;
-  color:#7fe9ff;
+  color:#8cefff;
   font-size:20px;
   cursor:pointer;
+  transition:0.3s;
+}
+
+.controls button:hover{
+  background:linear-gradient(135deg,#00cfff,#0077ff);
+  color:black;
+  transform:scale(1.1);
 }
 
 </style>
@@ -197,7 +217,7 @@ body{
 <div id="password-screen">
   <div class="lock-card">
     <h1>here's a little surprise for u, my love♥︎</h1>
-    <input type="password" id="password-input" placeholder="Enter key">
+    <input type="password" id="password-input" placeholder="enter kuch toh">
     <button onclick="checkPassword()">okie hai jaanu</button>
   </div>
 </div>
@@ -206,8 +226,8 @@ body{
 
   <div class="album-container" id="album">
     <div class="cd-wrapper">
-  <div class="cd" id="cd"></div>
-</div>
+      <div class="cd" id="cd"></div>
+    </div>
     <div class="cover">
       <img src="cover.jpg">
     </div>
@@ -227,7 +247,7 @@ body{
 
 <script>
 
-const password="mehufriedmomos";
+const password="1234";
 
 const tracks=[
 "track1.mp3","track2.mp3","track3.mp3",
@@ -265,12 +285,16 @@ function togglePlay(){
     audio.play();
     playBtn.innerText="❚❚";
     album.classList.add("playing");
-    cd.classList.add("spinning");
+
+    setTimeout(()=>{
+      cd.classList.add("spinning");
+    },300);
+
   }else{
     audio.pause();
     playBtn.innerText="▶";
-    album.classList.remove("playing");
     cd.classList.remove("spinning");
+    album.classList.remove("playing");
   }
 }
 
