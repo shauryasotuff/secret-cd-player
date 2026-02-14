@@ -10,8 +10,18 @@
       text-align: center;
     }
 
-    .container {
+    .player {
       margin-top: 40px;
+    }
+
+    .display {
+      background: #001100;
+      color: lime;
+      padding: 10px;
+      width: 250px;
+      margin: auto;
+      border: 2px solid lime;
+      margin-bottom: 20px;
     }
 
     .cd {
@@ -34,7 +44,7 @@
       background: black;
       color: lime;
       border: 1px solid lime;
-      padding: 10px;
+      padding: 8px;
       margin: 5px;
       cursor: pointer;
     }
@@ -53,27 +63,56 @@
   <button onclick="unlock()">Unlock</button>
 </div>
 
-<div id="playerUI" class="container">
-  <div class="cd" id="disc"></div>
-  <audio id="audio" src="song.mp3"></audio>
+<div id="playerUI" class="player">
+  <div class="display">
+    <div id="trackDisplay">Track 01</div>
+    <div id="timeDisplay">00:00</div>
+  </div>
 
-  <button onclick="play()">Play</button>
-  <button onclick="pause()">Pause</button>
+  <div class="cd" id="disc"></div>
+  <audio id="audio"></audio>
+
+  <button onclick="previous()">⏮</button>
+  <button onclick="play()">▶</button>
+  <button onclick="pause()">⏸</button>
+  <button onclick="next()">⏭</button>
 </div>
 
 <script>
-  const correctPassword = "hersecret"; // CHANGE THIS
+  const correctPassword = "hersecret"; // change this
+
+  const playlist = [
+    "track1.mp3",
+    "track2.mp3",
+    "track3.mp3"
+  ];
+
+  let currentTrack = 0;
+
   const audio = document.getElementById("audio");
   const disc = document.getElementById("disc");
+  const trackDisplay = document.getElementById("trackDisplay");
+  const timeDisplay = document.getElementById("timeDisplay");
 
   function unlock() {
     const entered = document.getElementById("password").value;
     if (entered === correctPassword) {
       document.getElementById("login").style.display = "none";
       document.getElementById("playerUI").style.display = "block";
+      loadTrack(currentTrack);
     } else {
       alert("Wrong password 💿");
     }
+  }
+
+  function loadTrack(index) {
+    audio.src = playlist[index];
+    updateTrackDisplay();
+  }
+
+  function updateTrackDisplay() {
+    let number = (currentTrack + 1).toString().padStart(2, "0");
+    trackDisplay.textContent = "Track " + number;
   }
 
   function play() {
@@ -85,6 +124,27 @@
     audio.pause();
     disc.classList.remove("spin");
   }
+
+  function next() {
+    currentTrack = (currentTrack + 1) % playlist.length;
+    loadTrack(currentTrack);
+    play();
+  }
+
+  function previous() {
+    currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+    loadTrack(currentTrack);
+    play();
+  }
+
+  audio.addEventListener("timeupdate", () => {
+    let minutes = Math.floor(audio.currentTime / 60);
+    let seconds = Math.floor(audio.currentTime % 60);
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    timeDisplay.textContent = minutes + ":" + seconds;
+  });
+
+  audio.addEventListener("ended", next);
 </script>
 
 </body>
