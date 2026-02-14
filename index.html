@@ -1,25 +1,34 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html>
 <head>
-  <title>Untitled</title>
+  <title>untitled</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
       margin: 0;
-      background: #0f0f0f;
+      background: #0e0e0e;
       color: white;
       font-family: -apple-system, BlinkMacSystemFont, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      overflow: hidden;
     }
 
     .container {
       text-align: center;
       width: 90%;
       max-width: 400px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+
+    .container.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .disc-wrapper {
@@ -27,20 +36,29 @@
       width: 240px;
       height: 240px;
       margin: 0 auto 30px auto;
+      transform: translateY(-40px);
+      opacity: 0;
+      transition: all 0.8s ease;
+    }
+
+    .disc-wrapper.show {
+      transform: translateY(0);
+      opacity: 1;
     }
 
     .disc {
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: #111;
       background-size: cover;
       background-position: center;
-      box-shadow: 0 0 40px rgba(255,255,255,0.05);
+      box-shadow: 0 0 30px rgba(255,255,255,0.05);
+      transition: box-shadow 0.4s ease;
     }
 
     .spin {
-      animation: rotate 5s linear infinite;
+      animation: rotate 6s linear infinite;
+      box-shadow: 0 0 60px rgba(255,255,255,0.15);
     }
 
     @keyframes rotate {
@@ -51,24 +69,24 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 30px;
-      height: 30px;
-      background: #0f0f0f;
+      width: 28px;
+      height: 28px;
+      background: #0e0e0e;
       border-radius: 50%;
       transform: translate(-50%, -50%);
     }
 
     .track-info {
-      font-size: 14px;
-      opacity: 0.6;
-      margin-bottom: 8px;
+      font-size: 15px;
+      opacity: 0.8;
+      margin-bottom: 6px;
       letter-spacing: 1px;
     }
 
     .timer {
       font-size: 13px;
       opacity: 0.4;
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
     .controls {
@@ -104,6 +122,17 @@
       cursor: pointer;
     }
 
+    .love-note {
+      margin-top: 20px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .love-note.show {
+      opacity: 0.8;
+    }
+
     #player {
       display: none;
     }
@@ -111,33 +140,34 @@
 </head>
 <body>
 
-<div class="container">
+<div id="login">
+  <input type="password" id="password" placeholder="enter password">
+  <br>
+  <button onclick="unlock()">enter</button>
+</div>
 
-  <div id="login">
-    <input type="password" id="password" placeholder="enter password">
-    <br>
-    <button onclick="unlock()">enter</button>
+<div class="container" id="player">
+
+  <div class="disc-wrapper" id="discWrapper">
+    <div class="disc" id="disc"></div>
+    <div class="center-hole"></div>
   </div>
 
-  <div id="player">
+  <div class="track-info" id="trackInfo">track 01</div>
+  <div class="timer" id="timeDisplay">0:00</div>
 
-    <div class="disc-wrapper">
-      <div class="disc" id="disc"></div>
-      <div class="center-hole"></div>
-    </div>
-
-    <div class="track-info" id="trackInfo">track 01</div>
-    <div class="timer" id="timeDisplay">0:00</div>
-
-    <div class="controls">
-      <span onclick="previous()">⟵</span>
-      <span onclick="play()">●</span>
-      <span onclick="pause()">Ⅱ</span>
-      <span onclick="next()">⟶</span>
-    </div>
-
-    <audio id="audio"></audio>
+  <div class="controls">
+    <span onclick="previous()">⟵</span>
+    <span onclick="play()">●</span>
+    <span onclick="pause()">Ⅱ</span>
+    <span onclick="next()">⟶</span>
   </div>
+
+  <div class="love-note" id="loveNote">
+    made only for you.
+  </div>
+
+  <audio id="audio"></audio>
 
 </div>
 
@@ -145,9 +175,9 @@
   const correctPassword = "hersecret";
 
   const playlist = [
-    "track1.mp3",
-    "track2.mp3",
-    "track3.mp3"
+    { file: "track1.mp3", title: "first light" },
+    { file: "track2.mp3", title: "slow dancing" },
+    { file: "track3.mp3", title: "stay longer" }
   ];
 
   let currentTrack = 0;
@@ -156,15 +186,21 @@
   const disc = document.getElementById("disc");
   const trackInfo = document.getElementById("trackInfo");
   const timeDisplay = document.getElementById("timeDisplay");
+  const loveNote = document.getElementById("loveNote");
+  const player = document.getElementById("player");
+  const discWrapper = document.getElementById("discWrapper");
 
-  // 🔥 CHANGE THIS TO YOUR COVER IMAGE FILE NAME
   disc.style.backgroundImage = "url('cover.jpg')";
 
   function unlock() {
     const entered = document.getElementById("password").value;
     if (entered === correctPassword) {
       document.getElementById("login").style.display = "none";
-      document.getElementById("player").style.display = "block";
+      player.style.display = "block";
+
+      setTimeout(() => player.classList.add("show"), 50);
+      setTimeout(() => discWrapper.classList.add("show"), 200);
+
       loadTrack(currentTrack);
     } else {
       alert("wrong password");
@@ -172,8 +208,9 @@
   }
 
   function loadTrack(index) {
-    audio.src = playlist[index];
-    trackInfo.textContent = "track " + String(index + 1).padStart(2, "0");
+    audio.src = playlist[index].file;
+    trackInfo.textContent = playlist[index].title;
+    loveNote.classList.remove("show");
   }
 
   function play() {
@@ -205,9 +242,14 @@
     timeDisplay.textContent = minutes + ":" + seconds;
   });
 
-  audio.addEventListener("ended", next);
+  audio.addEventListener("ended", () => {
+    if (currentTrack === playlist.length - 1) {
+      loveNote.classList.add("show");
+    } else {
+      next();
+    }
+  });
 </script>
 
 </body>
 </html>
- 
