@@ -1,165 +1,221 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>untitled</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Archive</title>
 
-  <style>
-    body {
-      margin: 0;
-      background: #050510;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-    }
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-    .container {
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-      opacity: 0;
-      transition: opacity 1s ease;
-    }
+body {
+  background: radial-gradient(circle at center, #001a2e 0%, #000 70%);
+  color: white;
+  overflow: hidden;
+}
 
-    .container.show {
-      opacity: 1;
-    }
+/* ================= PASSWORD SCREEN ================= */
 
-    .cover-wrapper {
-      position: relative;
-      width: 260px;
-      height: 260px;
-      margin: 0 auto 40px auto;
-    }
+#password-screen {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    .cover {
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      position: absolute;
-      z-index: 2;
-      box-shadow: 0 0 40px rgba(0, 140, 255, 0.4);
-    }
+.lock-card {
+  padding: 40px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 0 50px #00aaff;
+  text-align: center;
+  width: 85%;
+  max-width: 350px;
+}
 
-    .disc {
-      position: absolute;
-      width: 240px;
-      height: 240px;
-      border-radius: 50%;
-      background: radial-gradient(circle at center, #111 30%, #000 60%);
-      top: 10px;
-      left: 10px;
-      z-index: 1;
-      transform: translateX(0);
-      transition: transform 1.2s ease;
-      box-shadow: 0 0 20px rgba(0, 140, 255, 0.2);
-    }
+.lock-card h1 {
+  color: #00c3ff;
+  margin-bottom: 20px;
+  letter-spacing: 3px;
+}
 
-    .disc.slide {
-      transform: translateX(140px);
-    }
+.lock-card input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #00aaff;
+  background: black;
+  color: #00c3ff;
+  margin-bottom: 15px;
+  outline: none;
+}
 
-    .disc.spin {
-      animation: rotate 6s linear infinite;
-      box-shadow: 0 0 60px rgba(0, 140, 255, 0.8);
-    }
+.lock-card button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 30px;
+  border: none;
+  background: #00aaff;
+  color: black;
+  font-weight: bold;
+  box-shadow: 0 0 20px #00aaff;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
-    @keyframes rotate {
-      100% { transform: translateX(140px) rotate(360deg); }
-    }
+.lock-card button:hover {
+  box-shadow: 0 0 40px #00c3ff;
+}
 
-    .center-hole {
-      position: absolute;
-      width: 30px;
-      height: 30px;
-      background: #050510;
-      border-radius: 50%;
-      top: 50%;
-      left: calc(50% + 70px);
-      transform: translate(-50%, -50%);
-      z-index: 3;
-    }
+/* ================= PLAYER ================= */
 
-    .track-info {
-      font-size: 14px;
-      letter-spacing: 2px;
-      margin-bottom: 8px;
-      opacity: 0.8;
-    }
+.player {
+  display: none;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
 
-    .timer {
-      font-size: 13px;
-      opacity: 0.4;
-      margin-bottom: 25px;
-    }
+/* Album Container */
+.album-container {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin-bottom: 30px;
+}
 
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      font-size: 20px;
-      cursor: pointer;
-      user-select: none;
-    }
+/* Cover */
+.cover {
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  overflow: hidden;
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 0 40px #00aaff;
+}
 
-    .controls span:hover {
-      color: #00aaff;
-    }
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-    input {
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid #333;
-      color: white;
-      padding: 10px;
-      text-align: center;
-      outline: none;
-      width: 200px;
-      margin-bottom: 20px;
-    }
+/* CD */
+.cd {
+  position: absolute;
+  top: 15px;
+  left: 60px;
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #ffffff 0%, #bbbbbb 40%, #999 70%, #666 100%);
+  box-shadow: 0 0 30px #00aaff;
+  transition: transform 0.6s ease;
+  z-index: 1;
+}
 
-    button {
-      background: none;
-      border: none;
-      color: white;
-      opacity: 0.6;
-      cursor: pointer;
-    }
+/* Center hole */
+.cd::after {
+  content: "";
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: black;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
-    #player {
-      display: none;
-    }
-  </style>
+/* Slide out when playing */
+.album-container.playing .cd {
+  transform: translateX(110px);
+}
+
+/* Spin animation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spinning {
+  animation: spin 4s linear infinite;
+}
+
+/* Track Info */
+.track-title {
+  font-size: 18px;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+  color: #00c3ff;
+}
+
+.time {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 25px;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.controls button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #00c3ff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.controls button:hover {
+  text-shadow: 0 0 15px #00c3ff;
+  transform: scale(1.2);
+}
+
+</style>
 </head>
+
 <body>
 
-<div id="login">
-  <input type="password" id="password" placeholder="enter password">
-  <br>
-  <button onclick="unlock()">enter</button>
+<!-- PASSWORD SCREEN -->
+<div id="password-screen">
+  <div class="lock-card">
+    <h1>ACCESS ARCHIVE</h1>
+    <input type="password" id="password-input" placeholder="Enter password">
+    <button onclick="checkPassword()">ENTER</button>
+  </div>
 </div>
 
-<div class="container" id="player">
+<!-- PLAYER -->
+<div class="player" id="player">
 
-  <div class="cover-wrapper">
-    <div class="disc" id="disc"></div>
-    <div class="cover" id="cover"></div>
-    <div class="center-hole"></div>
+  <div class="album-container" id="album">
+    <div class="cd" id="cd"></div>
+    <div class="cover">
+      <img src="cover.jpg">
+    </div>
   </div>
 
-  <div class="track-info" id="trackInfo">Track 01</div>
-  <div class="timer" id="timeDisplay">0:00</div>
+  <div class="track-title" id="track-title">Track 01</div>
+  <div class="time" id="time">0:00</div>
 
   <div class="controls">
-    <span onclick="previous()">⟵</span>
-    <span onclick="play()">●</span>
-    <span onclick="pause()">Ⅱ</span>
-    <span onclick="next()">⟶</span>
+    <button onclick="prevTrack()">⟵</button>
+    <button onclick="togglePlay()" id="play-btn">▶</button>
+    <button onclick="nextTrack()">⟶</button>
   </div>
 
   <audio id="audio"></audio>
@@ -167,75 +223,76 @@
 </div>
 
 <script>
-  const correctPassword = "hersecret";
 
-  const playlist = [
-    "track1.mp3","track2.mp3","track3.mp3",
-    "track4.mp3","track5.mp3","track6.mp3",
-    "track7.mp3","track8.mp3","track9.mp3",
-    "track10.mp3","track11.mp3","track12.mp3",
-    "track13.mp3"
-  ];
+const password = "1234"; // CHANGE THIS
 
-  let currentTrack = 0;
+const tracks = [
+"track1.mp3","track2.mp3","track3.mp3",
+"track4.mp3","track5.mp3","track6.mp3",
+"track7.mp3","track8.mp3","track9.mp3",
+"track10.mp3","track11.mp3","track12.mp3",
+"track13.mp3"
+];
 
-  const audio = document.getElementById("audio");
-  const disc = document.getElementById("disc");
-  const trackInfo = document.getElementById("trackInfo");
-  const timeDisplay = document.getElementById("timeDisplay");
-  const player = document.getElementById("player");
-  const cover = document.getElementById("cover");
+let currentTrack = 0;
+const audio = document.getElementById("audio");
+const title = document.getElementById("track-title");
+const time = document.getElementById("time");
+const album = document.getElementById("album");
+const cd = document.getElementById("cd");
+const playBtn = document.getElementById("play-btn");
 
-  cover.style.backgroundImage = "url('cover.jpg')";
-
-  function unlock() {
-    const entered = document.getElementById("password").value;
-    if (entered === correctPassword) {
-      document.getElementById("login").style.display = "none";
-      player.style.display = "block";
-      setTimeout(() => player.classList.add("show"), 50);
-      loadTrack(currentTrack);
-    } else {
-      alert("wrong password");
-    }
+function checkPassword(){
+  const input = document.getElementById("password-input").value;
+  if(input === password){
+    document.getElementById("password-screen").style.display = "none";
+    document.getElementById("player").style.display = "flex";
+    loadTrack();
+  } else {
+    alert("Wrong password");
   }
+}
 
-  function loadTrack(index) {
-    audio.src = playlist[index];
-    trackInfo.textContent = "Track " + String(index + 1).padStart(2, "0");
-  }
+function loadTrack(){
+  audio.src = tracks[currentTrack];
+  title.innerText = "Track " + String(currentTrack+1).padStart(2,'0');
+}
 
-  function play() {
+function togglePlay(){
+  if(audio.paused){
     audio.play();
-    disc.classList.add("slide");
-    disc.classList.add("spin");
-  }
-
-  function pause() {
+    playBtn.innerText = "❚❚";
+    album.classList.add("playing");
+    cd.classList.add("spinning");
+  } else {
     audio.pause();
-    disc.classList.remove("spin");
+    playBtn.innerText = "▶";
+    album.classList.remove("playing");
+    cd.classList.remove("spinning");
   }
+}
 
-  function next() {
-    currentTrack = (currentTrack + 1) % playlist.length;
-    loadTrack(currentTrack);
-    play();
-  }
+function nextTrack(){
+  currentTrack = (currentTrack+1)%tracks.length;
+  loadTrack();
+  audio.play();
+  togglePlay();
+}
 
-  function previous() {
-    currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-    loadTrack(currentTrack);
-    play();
-  }
+function prevTrack(){
+  currentTrack = (currentTrack-1+tracks.length)%tracks.length;
+  loadTrack();
+  audio.play();
+  togglePlay();
+}
 
-  audio.addEventListener("timeupdate", () => {
-    let minutes = Math.floor(audio.currentTime / 60);
-    let seconds = Math.floor(audio.currentTime % 60);
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-    timeDisplay.textContent = minutes + ":" + seconds;
-  });
+audio.addEventListener("timeupdate", () => {
+  let minutes = Math.floor(audio.currentTime / 60);
+  let seconds = Math.floor(audio.currentTime % 60);
+  if(seconds < 10) seconds = "0" + seconds;
+  time.innerText = minutes + ":" + seconds;
+});
 
-  audio.addEventListener("ended", next);
 </script>
 
 </body>
