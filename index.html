@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Private CD Player</title>
+  <style>
+    body {
+      background: black;
+      color: lime;
+      font-family: monospace;
+      text-align: center;
+    }
+
+    .container {
+      margin-top: 40px;
+    }
+
+    .cd {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, silver 40%, gray 60%);
+      margin: 20px auto;
+    }
+
+    .spin {
+      animation: rotate 4s linear infinite;
+    }
+
+    @keyframes rotate {
+      100% { transform: rotate(360deg); }
+    }
+
+    button {
+      background: black;
+      color: lime;
+      border: 1px solid lime;
+      padding: 10px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    #playerUI {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Private CD Player</h2>
+
+<div id="login">
+  <input type="password" id="password" placeholder="Enter Password">
+  <button onclick="unlock()">Unlock</button>
+</div>
+
+<div id="playerUI" class="container">
+  <div class="cd" id="disc"></div>
+  <audio id="audio" src="song.mp3"></audio>
+
+  <button onclick="play()">Play</button>
+  <button onclick="pause()">Pause</button>
+</div>
+
+<script>
+  const correctPassword = "hersecret"; // CHANGE THIS
+  const audio = document.getElementById("audio");
+  const disc = document.getElementById("disc");
+
+  function unlock() {
+    const entered = document.getElementById("password").value;
+    if (entered === correctPassword) {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("playerUI").style.display = "block";
+    } else {
+      alert("Wrong password 💿");
+    }
+  }
+
+  function play() {
+    audio.play();
+    disc.classList.add("spin");
+  }
+
+  function pause() {
+    audio.pause();
+    disc.classList.remove("spin");
+  }
+</script>
+
+</body>
+</html>
