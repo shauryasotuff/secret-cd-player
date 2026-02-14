@@ -88,21 +88,30 @@ body{
 }
 
 /* CD */
-.cd{
-  position:absolute;
-  top:15px;
-  left:15px;
-  width:230px;
-  height:230px;
-  border-radius:50%;
+..cd-wrapper {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  width: 230px;
+  height: 230px;
+  transform: translateX(-30px);
+  transition: transform 0.6s ease;
+  z-index: 1;
+}
+
+.album-container.playing .cd-wrapper {
+  transform: translateX(110px);
+}
+
+.cd {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
   background:
     radial-gradient(circle at 35% 35%, #ffffff 0%, #dcdcdc 30%, #aaa 60%, #777 100%);
   box-shadow:
-    0 0 30px rgba(0,255,255,0.2),
+    0 0 30px rgba(0,255,255,0.25),
     inset 0 0 30px rgba(255,255,255,0.5);
-  z-index:1;
-  transform:translateX(-30px); /* slight visible edge */
-  transition:transform 0.6s ease;
 }
 
 /* center hole */
@@ -141,8 +150,8 @@ body{
 
 /* Spin */
 @keyframes spin {
-  from { rotate: 0deg; }
-  to { rotate: 360deg; }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .spinning {
@@ -196,7 +205,9 @@ body{
 <div class="player" id="player">
 
   <div class="album-container" id="album">
-    <div class="cd" id="cd"></div>
+    <div class="cd-wrapper">
+  <div class="cd" id="cd"></div>
+</div>
     <div class="cover">
       <img src="cover.jpg">
     </div>
