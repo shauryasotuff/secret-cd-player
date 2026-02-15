@@ -534,13 +534,12 @@ if ('mediaSession' in navigator) {
 
 const canvas = document.getElementById("visualizer");
 const ctx = canvas.getContext("2d");
-
 let audioCtx, analyser, source, dataArray, bufferLength;
 let isVisualizerSetup = false;
 
 function initVisualizer() {
   if (isVisualizerSetup) return;
-
+  
   canvas.width = album.offsetWidth;
   canvas.height = album.offsetHeight;
 
@@ -564,7 +563,6 @@ function drawVisualizer() {
   requestAnimationFrame(drawVisualizer);
 
   analyser.getByteFrequencyData(dataArray);
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   let barWidth = (canvas.width / bufferLength) * 2;
