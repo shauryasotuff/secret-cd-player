@@ -396,25 +396,31 @@ if(savedTrack !== null){
 
 function loadTrack(){
   loader.style.display="block";
-  audio.crossOrigin = "anonymous";
-  audio.src=tracks[currentTrack];
+  
+  audio.crossOrigin = "anonymous"; 
+  audio.src = tracks[currentTrack];
+
   const img = document.querySelector(".cover img");
+  
   img.crossOrigin = "anonymous";
   
-img.onload = function(){
-  const tempCanvas = document.createElement("canvas");
-  const tempCtx = tempCanvas.getContext("2d");
+  img.src = "cover.jpg?t=" + new Date().getTime();
 
-  tempCanvas.width = img.width;
-  tempCanvas.height = img.height;
+  img.onload = function(){
+    const tempCanvas = document.createElement("canvas");
+    const tempCtx = tempCanvas.getContext("2d");
 
-  tempCtx.drawImage(img,0,0);
+    tempCanvas.width = img.width;
+    tempCanvas.height = img.height;
 
-  const pixel = tempCtx.getImageData(10,10,1,1).data;
-  const color = `rgb(${pixel[0]},${pixel[1]},${pixel[2]})`;
+    tempCtx.drawImage(img,0,0);
+    
+    const pixel = tempCtx.getImageData(10,10,1,1).data;
+    const color = `rgb(${pixel[0]},${pixel[1]},${pixel[2]})`;
 
-  album.style.boxShadow = `0 0 60px ${color}`;
-};
+    album.style.boxShadow = `0 0 60px ${color}`;
+  };
+
   title.innerText="Track "+String(currentTrack+1).padStart(2,'0');
 
   if ('mediaSession' in navigator) {
@@ -428,6 +434,7 @@ img.onload = function(){
     });
   }
 }
+
 
 function togglePlay(){
 if (!audioCtx) {
