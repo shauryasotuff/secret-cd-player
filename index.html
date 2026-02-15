@@ -354,6 +354,9 @@ const playBtn=document.getElementById("play-btn");
 const title=document.getElementById("track-title");
 const time=document.getElementById("time");
 const loader=document.getElementById("loader");
+let audioCtx;
+let analyser;
+let source;
 let repeatMode = 0; 
 // 0 = off
 // 1 = repeat one
@@ -374,6 +377,8 @@ function checkPassword(){
   if(document.getElementById("password-input").value===password){
     document.getElementById("password-screen").style.display="none";
     document.getElementById("player").style.display="flex";
+    canvas.width = album.offsetWidth;
+    canvas.height = album.offsetHeight;
     loadTrack();
     let savedTrack = localStorage.getItem("trackIndex");
 let savedTime = localStorage.getItem("trackTime");
@@ -391,6 +396,7 @@ if(savedTrack !== null){
 
 function loadTrack(){
   loader.style.display="block";
+  audio.crossOrigin = "anonymous";
   audio.src=tracks[currentTrack];
   const img = document.querySelector(".cover img");
 
@@ -423,8 +429,17 @@ img.onload = function(){
 }
 
 function togglePlay(){
-  audioCtx.resume();
-  
+if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    source = audioCtx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    analyser.fftSize = 64;
+} else {
+    audioCtx.resume();
+}
+ 
   if(audio.paused){
     audio.play();
     playBtn.innerText="❚❚";
@@ -523,13 +538,6 @@ const ctx = canvas.getContext("2d");
 canvas.width = album.offsetWidth;
 canvas.height = album.offsetHeight;
 
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const analyser = audioCtx.createAnalyser();
-const source = audioCtx.createMediaElementSource(audio);
-
-source.connect(analyser);
-analyser.connect(audioCtx.destination);
-
 analyser.fftSize = 64;
 const bufferLength = analyser.frequencyBinCount;
 const dataArray = new Uint8Array(bufferLength);
@@ -537,6 +545,11 @@ const dataArray = new Uint8Array(bufferLength);
 function drawVisualizer(){
   requestAnimationFrame(drawVisualizer);
 
+  // Add this safety check
+  if(!analyser) return; 
+
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
   analyser.getByteFrequencyData(dataArray);
 
   ctx.clearRect(0,0,canvas.width,canvas.height);
