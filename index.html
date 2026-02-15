@@ -477,9 +477,17 @@ audio.addEventListener("timeupdate",()=>{
   localStorage.setItem("trackTime", audio.currentTime);
 });
 
-audio.addEventListener("ended",()=>{
-  if(repeatMode === 2){
+audio.addEventListener("ended", () => {
+  if (repeatMode === 1) {
+    audio.play();
+  } else if (repeatMode === 2) {
     nextTrack();
+  } else {
+    if (currentTrack < tracks.length - 1) {
+      nextTrack();
+    } else {
+      togglePlay(); 
+    }
   }
 });
 
