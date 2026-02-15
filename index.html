@@ -399,7 +399,8 @@ function loadTrack(){
   audio.crossOrigin = "anonymous";
   audio.src=tracks[currentTrack];
   const img = document.querySelector(".cover img");
-
+  img.crossOrigin = "anonymous";
+  
 img.onload = function(){
   const tempCanvas = document.createElement("canvas");
   const tempCtx = tempCanvas.getContext("2d");
