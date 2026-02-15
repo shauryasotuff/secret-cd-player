@@ -171,6 +171,37 @@ body{
   object-fit:cover;
 }
 
+/* ===== Loading Spinner ===== */
+.loader{
+  position:absolute;
+  width:60px;
+  height:60px;
+  border:4px solid rgba(140,239,255,0.2);
+  border-top:4px solid #00cfff;
+  border-radius:50%;
+  animation:spinLoader 1s linear infinite;
+  display:none;
+  z-index:5;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+}
+
+@keyframes spinLoader{
+  from{transform:translate(-50%,-50%) rotate(0deg);}
+  to{transform:translate(-50%,-50%) rotate(360deg);}
+}
+
+/* ===== Now Playing Glow ===== */
+.now-playing{
+  animation:glowPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse{
+  from{box-shadow:0 0 25px rgba(0,255,255,0.3);}
+  to{box-shadow:0 0 60px rgba(0,255,255,0.8);}
+}
+
 /* Track info */
 .track-title{
   font-size:20px;
@@ -208,7 +239,6 @@ body{
   color:black;
   transform:scale(1.1);
 }
-
 </style>
 </head>
 
@@ -231,6 +261,7 @@ body{
     <div class="cover">
       <img src="cover.jpg">
     </div>
+    <div class="loader" id="loader"></div>
   </div>
 
   <div class="track-title" id="track-title">Track 01</div>
@@ -264,6 +295,7 @@ const cd=document.getElementById("cd");
 const playBtn=document.getElementById("play-btn");
 const title=document.getElementById("track-title");
 const time=document.getElementById("time");
+const loader=document.getElementById("loader");
 
 function checkPassword(){
   if(document.getElementById("password-input").value===password){
@@ -276,8 +308,20 @@ function checkPassword(){
 }
 
 function loadTrack(){
+  loader.style.display="block";
   audio.src=tracks[currentTrack];
   title.innerText="Track "+String(currentTrack+1).padStart(2,'0');
+
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: title.innerText,
+      artist: "Shaurya",
+      album: "★",
+      artwork: [
+        { src: "cover.jpg", sizes: "512x512", type: "image/jpeg" }
+      ]
+    });
+  }
 }
 
 function togglePlay(){
@@ -285,6 +329,7 @@ function togglePlay(){
     audio.play();
     playBtn.innerText="❚❚";
     album.classList.add("playing");
+    album.classList.add("now-playing");
 
     setTimeout(()=>{
       cd.classList.add("spinning");
@@ -295,6 +340,7 @@ function togglePlay(){
     playBtn.innerText="▶";
     cd.classList.remove("spinning");
     album.classList.remove("playing");
+    album.classList.remove("now-playing");
   }
 }
 
@@ -303,6 +349,7 @@ function nextTrack(){
   loadTrack();
   audio.play();
   album.classList.add("playing");
+  album.classList.add("now-playing");
   cd.classList.add("spinning");
   playBtn.innerText="❚❚";
 }
@@ -312,6 +359,7 @@ function prevTrack(){
   loadTrack();
   audio.play();
   album.classList.add("playing");
+  album.classList.add("now-playing");
   cd.classList.add("spinning");
   playBtn.innerText="❚❚";
 }
@@ -322,6 +370,17 @@ audio.addEventListener("timeupdate",()=>{
   if(s<10)s="0"+s;
   time.innerText=m+":"+s;
 });
+
+audio.addEventListener("canplay",()=>{
+  loader.style.display="none";
+});
+
+if ('mediaSession' in navigator) {
+  navigator.mediaSession.setActionHandler('play', () => audio.play());
+  navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+  navigator.mediaSession.setActionHandler('previoustrack', () => prevTrack());
+  navigator.mediaSession.setActionHandler('nexttrack', () => nextTrack());
+}
 
 </script>
 
