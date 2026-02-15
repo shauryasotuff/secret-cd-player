@@ -387,8 +387,10 @@ function checkPassword(){
     document.getElementById("password-screen").style.display = "none";
     document.getElementById("player").style.display = "flex";
     
-    initVisualizer();
+    // Call the visualizer setup now that the player is visible
+    initVisualizer(); 
 
+    loadTrack();
     let savedTrack = localStorage.getItem("trackIndex");
     let savedTime = localStorage.getItem("trackTime");
 
@@ -396,8 +398,6 @@ function checkPassword(){
       currentTrack = parseInt(savedTrack);
       loadTrack();
       audio.currentTime = parseFloat(savedTime) || 0;
-    } else {
-      loadTrack();
     }
   } else {
     alert("Wrong key");
