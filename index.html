@@ -94,8 +94,6 @@ body{
   width:260px;
   height:260px;
   margin-bottom:35px;
-  border-radius:18px;
-  overflow:hidden;
 }
 
 /* CD wrapper handles slide */
@@ -113,6 +111,7 @@ body{
 /* Slide out */
 .album-container.playing .cd-wrapper{
   transform:translateX(110px);
+  z-index:0;
 }
 
 /* CD handles rotation */
@@ -160,14 +159,15 @@ body{
   overflow:hidden;
   z-index:2;
   box-shadow:0 0 40px rgba(0,255,255,0.2);
-  background:#000; /* prevents edge bleed */
+  background:#000;
+  transform:translateZ(0); /* forces clean rendering */
 }
 
 .cover img{
   width:100%;
   height:100%;
   object-fit:cover;
-  display:block; /* removes tiny bottom gap */
+  display:block;
 }
 
 /* ===== Loading Spinner ===== */
