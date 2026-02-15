@@ -101,6 +101,7 @@ body{
 
 /* CD wrapper handles slide */
 .cd-wrapper{
+  z-index:3;
   position:absolute;
   top:15px;
   left:15px;
@@ -176,6 +177,7 @@ body{
 
 /* Cover */
 .cover{
+  z-index:2;
   position:absolute;
   width:100%;
   height:100%;
@@ -288,7 +290,7 @@ body{
   height:100%;
   top:0;
   left:0;
-  z-index:0;
+  z-index:1;
   opacity:0.3;
 }
 
@@ -422,6 +424,7 @@ img.onload = function(){
 
 function togglePlay(){
   audioCtx.resume();
+  
   if(audio.paused){
     audio.play();
     playBtn.innerText="❚❚";
@@ -517,8 +520,8 @@ if ('mediaSession' in navigator) {
 const canvas = document.getElementById("visualizer");
 const ctx = canvas.getContext("2d");
 
-canvas.width = 260;
-canvas.height = 260;
+canvas.width = album.offsetWidth;
+canvas.height = album.offsetHeight;
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 const analyser = audioCtx.createAnalyser();
