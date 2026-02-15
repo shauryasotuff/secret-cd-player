@@ -269,10 +269,11 @@ body{
   <div class="time" id="time">0:00</div>
 
   <div class="controls">
-    <button onclick="prevTrack()">⟵</button>
-    <button onclick="togglePlay()" id="play-btn">▶</button>
-    <button onclick="nextTrack()">⟶</button>
-  </div>
+  <button onclick="prevTrack()">⏮</button>
+  <button onclick="togglePlay()" id="play-btn">▶</button>
+  <button onclick="nextTrack()">⏭</button>
+  <button onclick="toggleLoop()" id="loop-btn">∞</button>
+</div>
 
   <audio id="audio"></audio>
 </div>
@@ -297,6 +298,9 @@ const playBtn=document.getElementById("play-btn");
 const title=document.getElementById("track-title");
 const time=document.getElementById("time");
 const loader=document.getElementById("loader");
+let isLooping = false;
+const loopBtn = document.getElementById("loop-btn");
+
 
 function checkPassword(){
   if(document.getElementById("password-input").value===password){
@@ -340,8 +344,11 @@ function togglePlay(){
     audio.pause();
     playBtn.innerText="▶";
     cd.classList.remove("spinning");
-    album.classList.remove("playing");
     album.classList.remove("now-playing");
+
+    setTimeout(()=>{
+      album.classList.remove("playing");
+    },300); // smooth slide back in
   }
 }
 
@@ -375,6 +382,19 @@ audio.addEventListener("timeupdate",()=>{
 audio.addEventListener("canplay",()=>{
   loader.style.display="none";
 });
+
+function toggleLoop(){
+  isLooping = !isLooping;     // switch true/false
+  audio.loop = isLooping;     // tell audio to loop
+
+  if(isLooping){
+    loopBtn.style.background="linear-gradient(135deg,#00cfff,#0077ff)";
+    loopBtn.style.color="black";
+  }else{
+    loopBtn.style.background="rgba(20,30,45,0.6)";
+    loopBtn.style.color="#8cefff";
+  }
+}
 
 if ('mediaSession' in navigator) {
   navigator.mediaSession.setActionHandler('play', () => audio.play());
